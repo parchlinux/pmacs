@@ -1,0 +1,99 @@
+#!/bin/sh
+# pmacs - Emacs distribution for Parch Gnu/Linux
+
+set -e
+
+PMACS_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+EMACS_DIR="${EMACS_DIR:-$PMACS_DIR}"
+export PMACSDIR="$EMACS_DIR"
+
+find_emacs() {
+    for emacs in emacs emacs-30 emacs-29 emacs-28; do
+        if command -v "$emacs" >/dev/null 2>&1; then
+            echo "$emacs"
+            return 0
+        fi
+    done
+    echo "Error: Emacs not found. Install Emacs 28 or later." >&2
+    exit 1
+}
+
+EMACS="$(find_emacs)"
+
+# Install the auto-loader into the user's Emacs directory
+do_setup() {
+    local emacs_dir="${HOME}/.emacs.d"
+    mkdir -p "$emacs_dir"
+    cp "$PMACS_DIR/static/init-loader.el" "$emacs_dir/init.el"
+    echo "pmacs: installed loader to $emacs_dir/init.el"
+    echo "pmacs: Emacs will now load pmacs on startup"
+}
+
+do_sync() {
+    echo "pmacs: synchronizing packages..."
+    "$EMACS" --batch \
+        --load "$EMACS_DIR/static/init-loader.el" \
+        --eval "(pmacs-sync)"
+    do_setup
+    echo "pmacs: sync complete"
+}
+
+do_upgrade() {
+    echo "pmacs: upgrading..."
+    do_sync
+    (cd "$PMACS_DIR" && git pull --rebase) || true
+    echo "pmacs: upgrade complete"
+}
+
+do_doctor() {
+    echo "pmacs: running diagnostics..."
+    "$EMACS" --batch \
+        --eval "(setq user-emacs-directory \"$EMACS_DIR\")" \
+        --load "$EMACS_DIR/lisp/pmacs.el" \
+        --load "$EMACS_DIR/lisp/pmacs-lib.el" \
+        --eval "(message \"Emacs: %s\" emacs-version)" \
+        --eval "(message \"pmacs-dir: %s\" pmacs-dir)" \
+        --eval "(message \"user-emacs-directory: %s\" user-emacs-directory)"
+}
+
+do_version() {
+    echo "pmacs 0.1.0"
+    "$EMACS" --version 2>/dev/null | head -1 || true
+}
+
+do_help() {
+    cat <<EOF
+pmacs - Emacs distribution for Parch Gnu/Linux
+
+Usage: pmacs [OPTIONS] [FILES...]
+
+Options:
+  -nw              Run in terminal mode
+  --sync           Install/update packages and set up Emacs
+  --upgrade        Update packages and pmacs
+  --doctor         Run diagnostics
+  --version        Show version
+  --help           Show this help
+
+After running \`pmacs --sync\`, Emacs will load pmacs automatically
+on startup without needing the pmacs command.
+EOF
+}
+
+case "${1:-}" in
+    --sync|-s)    do_sync ;;
+    --upgrade|-u) do_upgrade ;;
+    --doctor|-d)  do_doctor ;;
+    --version|-v) do_version ;;
+    --help|-h)    do_help ;;
+    -nw)
+        exec "$EMACS" -nw \
+            -l "$EMACS_DIR/static/init-loader.el" \
+            "${@:2}"
+        ;;
+    *)
+        exec "$EMACS" \
+            -l "$EMACS_DIR/static/init-loader.el" \
+            "$@"
+        ;;
+esac

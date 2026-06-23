@@ -1,0 +1,4 @@
+straight/
+*.elc
+custom.el
+.DS_Store
