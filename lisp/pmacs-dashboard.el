@@ -11,21 +11,19 @@
 (defun pmacs-dashboard--insert-recent-files ()
   (when (and (boundp 'recentf-list) recentf-list)
     (insert "\n")
-    (let ((files recentf-list) (count 0))
-      (while (and files (< count 10))
-        (let ((file (car files)))
-          (insert (propertize (abbreviate-file-name file)
-                              'face 'font-lock-keyword-face
-                              'help-echo "Mouse-1: open this file"
-                              'mouse-face 'highlight
-                              'keymap (let ((map (make-sparse-keymap)))
-                                        (define-key map [mouse-1]
-                                          (lambda ()
-                                            (interactive)
-                                            (find-file file)))
-                                        map))
-                  "\n"))
-        (setq files (cdr files) count (1+ count)))))
+    (let ((files (cl-subseq recentf-list 0 (min 10 (length recentf-list)))))
+      (dolist (f files)
+        (insert (propertize (abbreviate-file-name f)
+                            'face 'font-lock-keyword-face
+                            'help-echo "Mouse-1: open this file"
+                            'mouse-face 'highlight
+                            'keymap (let ((map (make-sparse-keymap)))
+                                      (define-key map [mouse-1]
+                                        (lambda ()
+                                          (interactive)
+                                          (find-file f)))
+                                      map))
+                "\n")))))
 
 (defun pmacs-dashboard--show ()
   (interactive)
