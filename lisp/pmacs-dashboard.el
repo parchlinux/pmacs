@@ -8,6 +8,32 @@
           ((< hour 17) "Good afternoon")
           (t "Good evening"))))
 
+(defun pmacs-dashboard--os-name ()
+  (with-temp-buffer
+    (insert-file-contents "/etc/os-release" nil nil 4096 t)
+    (if (re-search-forward "^PRETTY_NAME=\"\\([^\"]+\\)\"" nil t)
+        (match-string 1)
+      (if (re-search-forward "^PRETTY_NAME=\\([^\n]+\\)" nil t)
+          (match-string 1)
+        (capitalize (symbol-name system-type))))))
+
+(defun pmacs-dashboard--kernel-version ()
+  (with-temp-buffer
+    (call-process "uname" nil t nil "-r")
+    (string-trim (buffer-string))))
+
+(defun pmacs-dashboard--uptime ()
+  (with-temp-buffer
+    (insert-file-contents "/proc/uptime" nil nil 256 t)
+    (let ((seconds (floor (string-to-number (buffer-string)))))
+      (format "%dd %dh %dm" (/ seconds 86400) (% (/ seconds 3600) 24) (% (/ seconds 60) 60)))))
+
+(defun pmacs-dashboard--load-average ()
+  (with-temp-buffer
+    (insert-file-contents "/proc/loadavg" nil nil 256 t)
+    (let ((parts (split-string (buffer-string))))
+      (car parts))))
+
 (defun pmacs-dashboard--insert-recent-files ()
   (when (and (boundp 'recentf-list) recentf-list)
     (insert "\n")
@@ -31,13 +57,17 @@
     (with-current-buffer buf
       (erase-buffer)
       (read-only-mode -1)
-      (insert (pmacs-dashboard--time-greeting) " and welcome to\n"
-              "pmacs for Parch Gnu/Linux.\n\n")
+      (insert (pmacs-dashboard--time-greeting)
+              ", and welcome to pmacs.\n\n")
+      (insert (pmacs-dashboard--os-name) "\n"
+              "Kernel " (pmacs-dashboard--kernel-version) "\n"
+              "Uptime " (pmacs-dashboard--uptime) "\n"
+              "Load   " (pmacs-dashboard--load-average) "\n\n")
       (when (and (boundp 'recentf-list) recentf-list)
         (insert "Recent files:\n")
         (pmacs-dashboard--insert-recent-files)
         (insert "\n"))
-      (insert (format "Emacs %s — pmacs %s" emacs-version pmacs-version))
+      (insert (format "Emacs %s  —  pmacs %s" emacs-version pmacs-version))
       (goto-char (point-min))
       (read-only-mode 1))
     (switch-to-buffer buf)))
