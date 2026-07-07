@@ -46,8 +46,7 @@
 (defun pmacs-dashboard--schedule ()
   (run-with-idle-timer 0.3 nil
     (lambda ()
-      (unless (or (buffer-file-name)
-                  (member (buffer-name) '("*scratch*" "*Messages*" "*straight-process*")))
+      (unless (buffer-file-name)
         (pmacs-dashboard--show)))))
 
 (provide 'pmacs-dashboard)
