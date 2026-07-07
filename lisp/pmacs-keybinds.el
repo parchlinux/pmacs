@@ -7,6 +7,7 @@
 
 (defun pmacs-init-evil ()
   (when (require 'evil nil t)
+    (setq evil-want-keybinding nil)
     (evil-mode 1)
     (when (require 'evil-collection nil t)
       (evil-collection-init))))

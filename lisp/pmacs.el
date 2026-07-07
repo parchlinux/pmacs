@@ -65,7 +65,6 @@
 
 (push pmacs-core-dir load-path)
 (push (concat pmacs-core-dir "lib") load-path)
-(push pmacs-user-dir load-path)
 
 (dolist (dir (directory-files pmacs-module-dir t "\\`[a-z-]+\\'" t))
   (when (file-directory-p dir)

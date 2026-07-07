@@ -1,4 +1,7 @@
 ;;; early-init.el --- pmacs early initialization -*- lexical-binding: t; -*-
+;;; Commentary:
+;; Runs before package system and init.el. Optimizes startup performance.
+;;; Code:
 
 (setq gc-cons-threshold most-positive-fixnum
       gc-cons-percentage 0.6)
@@ -31,5 +34,7 @@
 (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
 (setq frame-inhibit-implied-resize t)
+
+(setq evil-want-keybinding nil)
 
 ;;; early-init.el ends here
