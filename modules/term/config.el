@@ -18,8 +18,8 @@
       (vterm)
     (message "pmacs: vterm not available. Run `pmacs-sync' to install it.")))
 
-(setq eshell-history-file (pmacs-state-dir "eshell" "history")
-      eshell-last-dir-ring-file (pmacs-state-dir "eshell" "lastd")
+(setq eshell-history-file (expand-file-name "history" (expand-file-name "eshell" pmacs-state-dir))
+      eshell-last-dir-ring-file (expand-file-name "lastd" (expand-file-name "eshell" pmacs-state-dir))
       eshell-prompt-function 'pmacs-eshell-prompt
       eshell-prompt-regexp "^[^#$]*[#$] ")
 

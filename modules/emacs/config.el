@@ -28,7 +28,7 @@
       vc-command-messages nil)
 
 (setq tramp-default-method "ssh"
-      tramp-auto-save-directory (pmacs-state-dir "tramp" "auto-save")
+      tramp-auto-save-directory (expand-file-name "auto-save" (expand-file-name "tramp" pmacs-state-dir))
       tramp-ssh-controlmaster-options
       "-o ControlMaster=auto -o ControlPath='tramp%%h' -o ControlPersist=no")
 

@@ -25,14 +25,14 @@
 (when (fboundp 'global-undo-tree-mode)
   (setq undo-tree-auto-save-history t
         undo-tree-history-directory-alist
-        `(("." . ,(pmacs-state-dir "undo")))
+        `(("." . ,(expand-file-name "undo" pmacs-state-dir)))
         undo-tree-visualizer-diff t
         undo-tree-visualizer-timestamps t)
   (add-hook 'after-init-hook #'global-undo-tree-mode))
 
 (when (fboundp 'yas-global-mode)
-  (setq yas-snippet-dirs (list (pmacs-dir "snippets")
-                                (pmacs-data-dir "snippets"))
+  (setq yas-snippet-dirs (list (concat pmacs-dir "snippets/")
+                                (expand-file-name "snippets" pmacs-data-dir))
         yas-wrap-around-region t
         yas-verbosity 0)
   (add-hook 'after-init-hook #'yas-global-mode))

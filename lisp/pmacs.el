@@ -71,16 +71,18 @@
     (add-to-list 'load-path dir)))
 
 (setq custom-theme-load-path
-      (append (list pmacs-theme-dir (pmacs-data-dir "themes"))
+      (append (list pmacs-theme-dir (expand-file-name "themes" pmacs-data-dir))
               custom-theme-load-path))
 
 (setq undo-tree-history-directory-alist
-      `(("." . ,(pmacs-state-dir "undo")))
-      recentf-save-file (pmacs-cache-dir "recentf")
-      save-place-file (pmacs-cache-dir "saveplace")
-      eshell-history-file (pmacs-state-dir "eshell" "history")
-      eshell-last-dir-ring-file (pmacs-state-dir "eshell" "lastd")
-      nsm-settings-file (pmacs-state-dir "network-security.data"))
+      `(("." . ,(expand-file-name "undo" pmacs-state-dir)))
+      recentf-save-file (expand-file-name "recentf" pmacs-cache-dir)
+      save-place-file (expand-file-name "saveplace" pmacs-cache-dir)
+      eshell-history-file (expand-file-name "history"
+                                            (expand-file-name "eshell" pmacs-state-dir))
+      eshell-last-dir-ring-file (expand-file-name "lastd"
+                                                  (expand-file-name "eshell" pmacs-state-dir))
+      nsm-settings-file (expand-file-name "network-security.data" pmacs-state-dir))
 
 (provide 'pmacs)
 ;;; pmacs.el ends here

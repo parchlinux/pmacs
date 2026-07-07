@@ -162,7 +162,7 @@
       compilation-always-kill t
       compilation-scroll-output 'first-error
       tramp-default-method "ssh"
-      tramp-auto-save-directory (pmacs-state-dir "tramp" "auto-save"))
+      tramp-auto-save-directory (expand-file-name "auto-save" (expand-file-name "tramp" pmacs-state-dir)))
 
 (defun pmacs-init-parch-keybinds ()
   "Initialize Parch-specific keybindings."
