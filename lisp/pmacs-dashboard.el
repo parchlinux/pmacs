@@ -31,14 +31,13 @@
     (with-current-buffer buf
       (erase-buffer)
       (read-only-mode -1)
-      (insert (pmacs-dashboard--time-greeting) ".\n\n")
+      (insert (pmacs-dashboard--time-greeting) " and welcome to\n"
+              "pmacs for Parch Gnu/Linux.\n\n")
       (when (and (boundp 'recentf-list) recentf-list)
         (insert "Recent files:\n")
         (pmacs-dashboard--insert-recent-files)
         (insert "\n"))
-      (insert (format "System: %s %s\n" system-type (system-name))
-              (format "Emacs: %s\n" emacs-version)
-              (format "pmacs: %s" pmacs-version))
+      (insert (format "Emacs %s — pmacs %s" emacs-version pmacs-version))
       (goto-char (point-min))
       (read-only-mode 1))
     (switch-to-buffer buf)))
